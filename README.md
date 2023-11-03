@@ -37,7 +37,7 @@
 
 - Security
   - [ ] Setup IAM
-  - [ ] Setup SCM
+  - [x] Setup SCM
 - Network
   - [x] Setup VPC
   - [ ] Setup Security Group
@@ -52,7 +52,7 @@
   - [ ] Setup ALB
   - [ ] Setup TargetGroup
 - Container
-  - [ ] Setup ECR
+  - [x] Setup ECR
   - [ ] Setup ECS
 - Monitoring
   - [ ] Setup Cloudwatch
