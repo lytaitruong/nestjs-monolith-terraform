@@ -45,10 +45,10 @@ module "vpc" {
   private_subnet_names  = [for k, v in local.azs : "${var.name}-private-subnet-${v}-${var.env}"]
   database_subnet_names = [for k, v in local.azs : "${var.name}-database-subnet-${v}-${var.env}"]
 
+  database_subnet_group_name = "${var.name}-dsg-${var.env}"
   database_route_table_tags  = { Name = "${var.name}-rtb-database-${var.env}" }
   private_route_table_tags   = { Name = "${var.name}-rtb-private-${var.env}" }
   public_route_table_tags    = { Name = "${var.name}-rtb-public-${var.env}" }
-  database_subnet_group_tags = { Name = "${var.name}-dsg-${var.env}" }
   vpn_gateway_tags           = { Name = "${var.name}-vpn-${var.env}" }
   nat_eip_tags               = { Name = "${var.name}-eip-${var.env}" }
   igw_tags                   = { Name = "${var.name}-igw-${var.env}" }

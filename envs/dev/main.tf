@@ -17,11 +17,18 @@ terraform {
 
 provider "aws" {
   region = local.region
+
+  default_tags {
+    tags = {
+      Terraform = "true"
+      Environment = "development"
+    }
+  }
 }
 
 locals {
-  env    = "development"
   region = "ap-southeast-1"
+  env    = "development"
   name   = "nestjs-monolith"
   cidr   = "180.0.0.0/16"
 }
@@ -33,4 +40,12 @@ module "vpc" {
   env  = local.env
   name = local.name
   cidr = local.cidr
+}
+
+//ECR
+module "ecr" {
+  source = "../../modules/container/ecr"
+
+  env = local.env
+  name = local.name
 }
