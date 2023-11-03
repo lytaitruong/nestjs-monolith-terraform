@@ -1,8 +1,14 @@
 data "aws_caller_identity" "current" {}
 
+/**
+  ** Document Link: https://registry.terraform.io/modules/terraform-aws-modules/ecr/aws/latest
+  ** Problems Link: https://github.com/terraform-aws-modules/terraform-aws-ecr/issues
+*/
 module "ecr" {
-  source = "terraform-aws-modules/ecr/aws"
+  source  = "terraform-aws-modules/ecr/aws"
   version = "~> 1.6"
+  // Conditions create new environment or not if exist
+  create = true
 
   repository_name = "${var.name}-${var.env}"
 
@@ -26,11 +32,11 @@ module "ecr" {
       }
     ]
   })
-  repository_force_delete = true
+  repository_force_delete    = true
   repository_encryption_type = "KMS"
 
   tags = {
-    Terraform = "true"
+    Terraform   = "true"
     Environment = var.env
   }
 }
