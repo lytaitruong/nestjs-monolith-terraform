@@ -8,7 +8,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.1.0"
+      version = "~> 5.20.1"
     }
   }
 
@@ -62,12 +62,12 @@ module "security_group_public" {
 
   vpc_id = module.vpc.id
 
-  ingress_cidr_blocks = [module.vpc.cidr_block]
+  ingress_cidr_blocks      = [module.vpc.cidr_block]
   ingress_ipv6_cidr_blocks = [module.vpc.ipv6_cidr_block]
-  ingress_rules       = ["ssh-tcp", "http-80-tcp", "https-443-tcp"]
-  egress_cidr_blocks = [module.vpc.cidr_block]
-  egress_ipv6_cidr_blocks = [module.vpc.ipv6_cidr_block]
-  egress_rules       = ["all-all"]
+  ingress_rules            = ["ssh-tcp", "http-80-tcp", "https-443-tcp"]
+  egress_cidr_blocks       = [module.vpc.cidr_block]
+  egress_ipv6_cidr_blocks  = [module.vpc.ipv6_cidr_block]
+  egress_rules             = ["all-all"]
 }
 
 module "security_group_private" {
@@ -121,4 +121,21 @@ module "security_group_database" {
       source_security_group_id = module.security_group_private.security_group_id
     }
   ]
+}
+
+// ALB
+module "alb" {
+  depends_on = [module.vpc, module.security_group_public]
+  source     = "../../modules/autoscaling/alb"
+
+  env  = local.env
+  name = local.name
+
+  app_port = var.app_port
+  app_type = var.app_type
+  app_path = var.app_path
+
+  vpc_id          = module.vpc.id
+  vpc_subnets     = module.vpc.public_subnets
+  security_groups = [module.security_group_public.security_group_id]
 }
