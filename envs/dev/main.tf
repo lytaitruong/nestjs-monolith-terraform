@@ -62,17 +62,11 @@ module "security_group_public" {
 
   vpc_id = module.vpc.id
 
-  ingress_cidr_blocks = [local.cidr]
-  ingress_rules       = ["ssh-tcp"]
-  ingress_with_self = [
-    {
-      from_port   = 3333
-      to_port     = 3333
-      protocol    = "tcp"
-      description = "App Service Port"
-    }
-  ]
-  egress_cidr_blocks = [local.cidr]
+  ingress_cidr_blocks = [module.vpc.cidr_block]
+  ingress_ipv6_cidr_blocks = [module.vpc.ipv6_cidr_block]
+  ingress_rules       = ["ssh-tcp", "http-80-tcp", "https-443-tcp"]
+  egress_cidr_blocks = [module.vpc.cidr_block]
+  egress_ipv6_cidr_blocks = [module.vpc.ipv6_cidr_block]
   egress_rules       = ["all-all"]
 }
 
@@ -96,15 +90,11 @@ module "security_group_private" {
   ]
   egress_with_source_security_group_id = [
     {
-      from_port                = 0
-      to_port                  = 0
-      protocol                 = "-1"
-      description              = "App Port"
+      rule                     = "all-all"
       source_security_group_id = module.security_group_public.security_group_id
     }
   ]
 }
-
 
 module "security_group_database" {
   depends_on = [module.vpc, module.security_group_private]
@@ -127,10 +117,7 @@ module "security_group_database" {
   ]
   egress_with_source_security_group_id = [
     {
-      from_port                = 0
-      to_port                  = 0
-      protocol                 = "-1"
-      description              = "Outbound database"
+      rule                     = "all-all"
       source_security_group_id = module.security_group_private.security_group_id
     }
   ]
