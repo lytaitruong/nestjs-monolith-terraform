@@ -34,7 +34,7 @@ module "alb" {
       backend_port                      = var.app_port
       ip_address_type                   = "ipv6"
       backend_protocol                  = "HTTP"
-      protocol_version                  = "HTTP1"
+      protocol_version                  = var.app_enable_tls ? "HTTP2" : "HTTP1"
       deregistration_delay              = 10
       load_balancing_cross_zone_enabled = true
       health_check = {
@@ -62,16 +62,42 @@ module "alb" {
       create_attachment = false
     }
   }
+  /**
+    ** When you don't have domain name
+  */
   listeners = {
     http-tcp = {
-      port     = 80
-      protocol = "HTTP"
-      forward = {
-        target_group_key = "${var.name}-tgg-${var.env}"
+      port        = 80
+      protocol    = "HTTP"
+      action_type = "fixed-response"
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "Nothing to see here... Move along!"
+        status_code  = "404"
+      }
+      rules = {
+        main-request = {
+          priority = 1
+          actions = [
+            {
+              type             = "forward"
+              target_group_key = "${var.name}-tgg-${var.env}"
+              stickiness = {
+                enabled            = true
+                duration           = 3600
+                target_group_index = 0
+              }
+            }
+          ]
+          conditions = [{
+            path_pattern = {
+              values = [var.app_path]
+            }
+          }]
+        }
       }
     }
   }
-  # Application Load Balancers provide native support for HTTP/2 with HTTPS listeners. You can send up to 128 requests in parallel using one HTTP/2 connection
 
   tags = {
     Environment = var.env
