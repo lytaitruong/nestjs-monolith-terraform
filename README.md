@@ -37,10 +37,10 @@
 
 - Security
   - [ ] Setup IAM
-  - [x] Setup SCM
+  - [ ] Setup SCM
 - Network
   - [x] Setup VPC
-  - [ ] Setup Security Group
+  - [x] Setup Security Group
 - Storage
   - [ ] Setup S3
   - [ ] Setup Cloudfront
@@ -49,8 +49,8 @@
   - [ ] RDS RedisCache
 - AutoScaling
   - [ ] Setup API Gateway
-  - [ ] Setup ALB
-  - [ ] Setup TargetGroup
+  - [x] Setup ALB
+  - [x] Setup TargetGroup
 - Container
   - [x] Setup ECR
   - [ ] Setup ECS

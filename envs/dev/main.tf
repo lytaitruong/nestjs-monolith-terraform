@@ -8,7 +8,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.20.1"
+      version = "~> 5.24"
     }
   }
 
@@ -131,9 +131,11 @@ module "alb" {
   env  = local.env
   name = local.name
 
-  app_port = var.app_port
-  app_type = var.app_type
-  app_path = var.app_path
+  app_port        = var.app_port
+  app_type        = var.app_type
+  app_path        = var.app_path
+  app_enable_tls  = false
+  app_domain_cert = ""
 
   vpc_id          = module.vpc.id
   vpc_subnets     = module.vpc.public_subnets

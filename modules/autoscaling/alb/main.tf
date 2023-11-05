@@ -1,10 +1,17 @@
+// https://registry.terraform.io/modules/terraform-aws-modules/alb/aws/latest
+// Only use if you have buy domain name in Route53 or Cloudfare
+# data "aws_acm_certificate" "acm_certificate_issued" {
+#   domain   = var.app_domain_cert
+#   statuses = ["ISSUED"]
+# }
+
 /**
   ** Document Link: https://registry.terraform.io/modules/terraform-aws-modules/alb/aws/latest
   ** Problems Link: https://github.com/terraform-aws-modules/terraform-aws-alb/issues
 */
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
-  version = "~> 9.0.0"
+  version = "~> 9.1.0"
   // Conditions create new environment or not if exist
   create = true
 
@@ -83,9 +90,8 @@ module "alb" {
               type             = "forward"
               target_group_key = "${var.name}-tgg-${var.env}"
               stickiness = {
-                enabled            = true
-                duration           = 3600
-                target_group_index = 0
+                enabled  = true
+                duration = 600
               }
             }
           ]
@@ -94,10 +100,58 @@ module "alb" {
               values = [var.app_path]
             }
           }]
+          tags = { Name = "main-request" }
         }
       }
     }
   }
+  /**
+    ** When you have domain name
+  */
+  # listeners = {
+  #   http-redirect-https = {
+  #     port     = 80
+  #     protocol = "HTTP"
+  #     redirect = {
+  #       port        = "443"
+  #       protocol    = "HTTPS"
+  #       status_code = "HTTP_301"
+  #     }
+  #   }
+  #   https-tls = {
+  #     port            = 443
+  #     protocol        = "HTTPS"
+  #     ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-Res-2021-06"
+  #     certificate_arn = data.aws_acm_certificate.acm_certificate_issued
+  #     action_type     = "fixed-response"
+  #     fixed_response = {
+  #       content_type = "text/plain"
+  #       message_body = "Nothing to see here... Move along!"
+  #       status_code  = "404"
+  #     }
+  #     rules = {
+  #       main-request = {
+  #         priority = 1
+  #         actions = [
+  #           {
+  #             type             = "forward"
+  #             target_group_key = "${var.name}-tgg-${var.env}"
+  #             stickiness = {
+  #               enabled  = true
+  #               duration = 600
+  #             }
+  #           }
+  #         ]
+  #         conditions = [{
+  #           path_pattern = {
+  #             values = [var.app_path]
+  #           }
+  #         }]
+  #         tags = { Name = "main-request" }
+  #       }
+  #     }
+  #   }
+  # }
 
   tags = {
     Environment = var.env

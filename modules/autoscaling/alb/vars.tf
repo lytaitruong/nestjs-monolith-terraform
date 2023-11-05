@@ -24,6 +24,11 @@ variable "app_enable_tls" {
   description = "Container Have Domain"
 }
 
+variable "app_domain_cert" {
+  type        = string
+  description = "Container Domain Cert"
+}
+
 variable "app_type" {
   type        = string
   description = "Container App Type"
