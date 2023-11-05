@@ -48,7 +48,7 @@
   - [ ] RDS PostgreSQL
   - [ ] RDS RedisCache
 - AutoScaling
-  - [ ] Setup API Gateway
+  - [x] Setup API Gateway
   - [x] Setup ALB
   - [x] Setup TargetGroup
 - Container

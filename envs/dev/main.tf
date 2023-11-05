@@ -27,10 +27,11 @@ provider "aws" {
 }
 
 locals {
-  region = "ap-southeast-1"
-  env    = "development"
-  name   = "nestjs-monolith"
-  cidr   = "180.0.0.0/16"
+  region             = "ap-southeast-1"
+  env                = "development"
+  name               = "nestjs-monolith"
+  cidr               = "180.0.0.0/16"
+  enable_api_gateway = false
 }
 
 // ECR
@@ -128,14 +129,14 @@ module "alb" {
   depends_on = [module.vpc, module.security_group_public]
   source     = "../../modules/autoscaling/alb"
 
-  env  = local.env
-  name = local.name
+  env                = local.env
+  name               = local.name
+  enable_api_gateway = local.enable_api_gateway
 
   app_port        = var.app_port
   app_type        = var.app_type
   app_path        = var.app_path
-  app_enable_tls  = false
-  app_domain_cert = ""
+  acm_cert_domain = var.acm_cert_domain
 
   vpc_id          = module.vpc.id
   vpc_subnets     = module.vpc.public_subnets
@@ -146,8 +147,11 @@ module "api_gateway" {
   depends_on = [module.vpc, module.alb, module.security_group_public]
   source     = "../../modules/autoscaling/api_gateway"
 
-  env  = local.env
-  name = local.name
+  env                = local.env
+  name               = local.name
+  enable_api_gateway = local.enable_api_gateway
+
+  acm_cert_domain = var.acm_cert_domain
 
   alb_arn            = module.alb.arn
   subnet_ids         = module.vpc.public_subnets

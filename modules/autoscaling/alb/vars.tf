@@ -8,6 +8,12 @@ variable "name" {
   description = "Name of Security Group"
 }
 
+variable "enable_api_gateway" {
+  type        = bool
+  default     = false
+  description = "Enable HTTP Gateway transfer request to ALB"
+}
+
 variable "app_path" {
   type        = string
   description = "Container App Prefix Path"
@@ -18,14 +24,9 @@ variable "app_port" {
   description = "Container App Port"
 }
 
-variable "app_enable_tls" {
-  type        = bool
-  default     = false
-  description = "Container Have Domain"
-}
-
-variable "app_domain_cert" {
+variable "acm_cert_domain" {
   type        = string
+  default     = null
   description = "Container Domain Cert"
 }
 

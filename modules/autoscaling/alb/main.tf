@@ -1,7 +1,6 @@
-// https://registry.terraform.io/modules/terraform-aws-modules/alb/aws/latest
 // Only use if you have buy domain name in Route53 or Cloudfare
-# data "aws_acm_certificate" "acm_certificate_issued" {
-#   domain   = var.app_domain_cert
+# data "aws_acm_certificate" "acm" {
+#   domain   = var.acm_cert_domain
 #   statuses = ["ISSUED"]
 # }
 
@@ -15,10 +14,10 @@ module "alb" {
   // Conditions create new environment or not if exist
   create = true
 
-  name               = var.name
+  name               = "${var.name}-alb-${var.env}"
   load_balancer_type = "application"
 
-  internal        = true
+  internal        = var.enable_api_gateway ? true : false
   ip_address_type = "dualstack"
 
   vpc_id          = var.vpc_id
@@ -41,7 +40,7 @@ module "alb" {
       backend_port                      = var.app_port
       ip_address_type                   = "ipv6"
       backend_protocol                  = "HTTP"
-      protocol_version                  = var.app_enable_tls ? "HTTP2" : "HTTP1"
+      protocol_version                  = var.acm_cert_domain != null ? "HTTP2" : "HTTP1"
       deregistration_delay              = 10
       load_balancing_cross_zone_enabled = true
       health_check = {
@@ -122,7 +121,7 @@ module "alb" {
   #     port            = 443
   #     protocol        = "HTTPS"
   #     ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-Res-2021-06"
-  #     certificate_arn = data.aws_acm_certificate.acm_certificate_issued
+  #     certificate_arn = data.aws_acm_certificate.acm.acm_certificate_arn
   #     action_type     = "fixed-response"
   #     fixed_response = {
   #       content_type = "text/plain"

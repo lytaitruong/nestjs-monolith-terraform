@@ -17,3 +17,9 @@ variable "app_type" {
     error_message = "Allowed values for input_parameter are \"instance\", \"ip\", or \"alb\"."
   }
 }
+
+variable "acm_cert_domain" {
+  type        = string
+  description = "acm certification ARNS"
+  default     = null
+}
