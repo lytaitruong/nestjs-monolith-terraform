@@ -42,7 +42,7 @@
   - [x] Setup VPC
   - [x] Setup Security Group
 - Storage
-  - [ ] Setup S3
+  - [x] Setup S3
   - [ ] Setup Cloudfront
 - Database
   - [ ] RDS PostgreSQL

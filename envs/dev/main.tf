@@ -34,6 +34,24 @@ locals {
   enable_api_gateway = false
 }
 
+// S3
+module "s3" {
+  depends_on = []
+  for_each = {
+    secret-bucket = {
+      name            = "nestjs-secret-bucket"
+      type            = "private"
+      enabled_version = false
+    }
+  }
+  source = "../../modules/storage/s3"
+
+  env             = local.env
+  name            = each.value.name
+  type            = each.value.type
+  enabled_version = each.value.enabled_version
+}
+
 // ECR
 module "ecr" {
   depends_on = []
@@ -143,6 +161,7 @@ module "alb" {
   security_groups = [module.security_group_public.security_group_id]
 }
 
+// API_GATEWAY
 module "api_gateway" {
   depends_on = [module.vpc, module.alb, module.security_group_public]
   source     = "../../modules/autoscaling/api_gateway"
