@@ -141,3 +141,15 @@ module "alb" {
   vpc_subnets     = module.vpc.public_subnets
   security_groups = [module.security_group_public.security_group_id]
 }
+
+module "api_gateway" {
+  depends_on = [module.vpc, module.alb, module.security_group_public]
+  source     = "../../modules/autoscaling/api_gateway"
+
+  env  = local.env
+  name = local.name
+
+  alb_arn            = module.alb.arn
+  subnet_ids         = module.vpc.public_subnets
+  security_group_ids = [module.security_group_public.security_group_id]
+}

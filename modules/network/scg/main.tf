@@ -5,7 +5,7 @@
 module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.1.0"
-
+  // Conditions create new environment or not if exist
   create = true
   vpc_id = var.vpc_id
 
