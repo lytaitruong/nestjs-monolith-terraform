@@ -43,7 +43,7 @@
   - [x] Setup Security Group
 - Storage
   - [x] Setup S3
-  - [ ] Setup Cloudfront
+  - [x] Setup Cloudfront
 - Database
   - [ ] RDS PostgreSQL
   - [ ] RDS RedisCache

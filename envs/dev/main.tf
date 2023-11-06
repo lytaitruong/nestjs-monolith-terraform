@@ -4,6 +4,7 @@ terraform {
     bucket         = "nestjs-monolith-terraform"
     key            = "development/terraform.state"
     dynamodb_table = "terraform-state-lockfile-dev"
+    encrypt        = true
   }
   required_providers {
     aws = {
@@ -37,6 +38,8 @@ locals {
 // S3
 module "s3" {
   depends_on = []
+  source     = "../../modules/storage/s3"
+
   for_each = {
     secret-bucket = {
       name            = "nestjs-secret-bucket"
@@ -44,12 +47,26 @@ module "s3" {
       enabled_version = false
     }
   }
-  source = "../../modules/storage/s3"
 
   env             = local.env
   name            = each.value.name
   type            = each.value.type
   enabled_version = each.value.enabled_version
+}
+
+module "cloudfront" {
+  depends_on = [module.s3]
+  source     = "../../modules/network/cloudfront"
+
+  for_each = module.s3
+  env      = local.env
+  name     = local.name
+  region = local.region
+
+  s3_bucket_id            = each.value.bucket_id
+  s3_bucket_arn           = each.value.bucket_arn
+  s3_regional_domain_name = each.value.bucket_bucket_domain_name
+  price_class = "PriceClass_100"
 }
 
 // ECR
