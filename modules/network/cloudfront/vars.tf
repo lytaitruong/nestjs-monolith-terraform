@@ -37,3 +37,14 @@ variable "price_class" {
     error_message = "Allowed values for input_parameter are \"PriceClass_All\", \"PriceClass_200\", or \"PriceClass_100\"."
   }
 }
+
+variable "enable_shield" {
+  type    = bool
+  default = false
+}
+
+
+variable "trusted_key_groups" {
+  type    = list(string)
+  default = []
+}

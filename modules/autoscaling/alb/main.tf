@@ -12,7 +12,7 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 9.1.0"
   // Conditions create new environment or not if exist
-  create = true
+  create = false
 
   name               = "${var.name}-alb-${var.env}"
   load_balancer_type = "application"

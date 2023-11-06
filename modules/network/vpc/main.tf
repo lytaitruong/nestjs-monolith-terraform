@@ -25,7 +25,7 @@ module "vpc" {
   enable_dns_hostnames = true
 
   enable_vpn_gateway     = true
-  enable_nat_gateway     = true
+  enable_nat_gateway     = false
   single_nat_gateway     = true
   one_nat_gateway_per_az = true
 
@@ -36,7 +36,7 @@ module "vpc" {
   create_database_subnet_group           = true
   create_database_subnet_route_table     = true
   create_database_internet_gateway_route = true
-  create_database_nat_gateway_route      = true
+  create_database_nat_gateway_route      = false
 
   // IPv4
   public_subnets   = [for k, v in local.azs : cidrsubnet(var.cidr, 8, 100 + k)]
@@ -45,6 +45,7 @@ module "vpc" {
 
   // IPv6
   enable_ipv6 = true
+  create_egress_only_igw = true
 
   public_subnet_ipv6_prefixes   = [for k, v in local.azs : k + (length(local.azs) * 0) + 1]
   private_subnet_ipv6_prefixes  = [for k, v in local.azs : k + (length(local.azs) * 1) + 1]

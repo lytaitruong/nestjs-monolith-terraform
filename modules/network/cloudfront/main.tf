@@ -1,5 +1,3 @@
-
-
 /**
   ** Document Link: https://registry.terraform.io/modules/terraform-aws-modules/cloudfront/aws/latest
   ** Problems Link: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues
@@ -8,6 +6,8 @@
 module "cloudfront" {
   source  = "terraform-aws-modules/cloudfront/aws"
   version = "~> 3.2.1"
+  // Conditions create new environment or not if exist
+  create_distribution = true
 
   enabled         = true
   is_ipv6_enabled = true
@@ -44,10 +44,10 @@ module "cloudfront" {
           value = "SAMEORIGIN"
         }
       ]
-      origin_shield = {
-        enabled              = false
+      origin_shield = var.enable_shield ? {
+        enabled              = var.enable_shield
         origin_shield_region = var.region
-      }
+      } : {}
     }
   }
   default_cache_behavior = {
@@ -66,6 +66,7 @@ module "cloudfront" {
     # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html
     response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
     # restrict viewer access
+    trusted_key_groups = var.trusted_key_groups
   }
 
   custom_error_response = [{

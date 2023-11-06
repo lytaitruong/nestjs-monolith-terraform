@@ -61,12 +61,12 @@ module "cloudfront" {
   for_each = module.s3
   env      = local.env
   name     = local.name
-  region = local.region
+  region   = local.region
 
   s3_bucket_id            = each.value.bucket_id
   s3_bucket_arn           = each.value.bucket_arn
   s3_regional_domain_name = each.value.bucket_bucket_domain_name
-  price_class = "PriceClass_100"
+  price_class             = "PriceClass_100"
 }
 
 // ECR
