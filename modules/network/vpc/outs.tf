@@ -31,3 +31,11 @@ output "database_subnets" {
 output "database_subnets_group_name" {
   value = module.vpc.database_subnet_group_name
 }
+
+output "elasticache_subnets" {
+  value = module.vpc.elasticache_subnets
+}
+
+output "elasticache_subnets_group_name" {
+  value = module.vpc.elasticache_subnet_group_name
+}

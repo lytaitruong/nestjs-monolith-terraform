@@ -25,12 +25,12 @@ variable "database_security_groups" {
 }
 
 variable "database_subnets" {
-  type = list(string)
+  type        = list(string)
   description = "RDS Subnets Groups"
 }
 
 variable "database_subnets_group_name" {
-  type        =  string
+  type        = string
   description = "RDS Database Subnet Group Name"
 }
 

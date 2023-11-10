@@ -46,7 +46,7 @@
   - [x] Setup Cloudfront
 - Database
   - [x] RDS PostgreSQL
-  - [ ] RDS RedisCache
+  - [x] RDS RedisCache
 - AutoScaling
   - [x] Setup API Gateway
   - [x] Setup ALB

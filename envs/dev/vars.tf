@@ -23,3 +23,15 @@ variable "acm_cert_domain" {
   description = "acm certification ARNS"
   default     = null
 }
+
+variable "enable_elasticache" {
+  type        = bool
+  description = "enable AWS elasticache"
+  default     = false
+}
+
+variable "enable_elasticache_cluster" {
+  type        = bool
+  description = "enable AWS elascache mode Cluster"
+  default     = false
+}

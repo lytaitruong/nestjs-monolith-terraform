@@ -38,10 +38,14 @@ module "vpc" {
   create_database_internet_gateway_route = true
   create_database_nat_gateway_route      = false
 
+  create_elasticache_subnet_group        = true
+  create_elasticache_subnet_route_table  = true
+
   // IPv4
   public_subnets   = [for k, v in local.azs : cidrsubnet(var.cidr, 8, 100 + k)]
   private_subnets  = [for k, v in local.azs : cidrsubnet(var.cidr, 8, 110 + k)]
   database_subnets = [for k, v in local.azs : cidrsubnet(var.cidr, 8, 120 + k)]
+  elasticache_subnets = [for k, v in local.azs : cidrsubnet(var.cidr, 8, 130 + k)]
 
   // IPv6
   enable_ipv6 = true
@@ -50,14 +54,20 @@ module "vpc" {
   public_subnet_ipv6_prefixes   = [for k, v in local.azs : k + (length(local.azs) * 0) + 1]
   private_subnet_ipv6_prefixes  = [for k, v in local.azs : k + (length(local.azs) * 1) + 1]
   database_subnet_ipv6_prefixes = [for k, v in local.azs : k + (length(local.azs) * 2) + 1]
+  elasticache_subnet_ipv6_prefixes = [for k, v in local.azs : k + (length(local.azs) * 3) + 1]
 
   // Defined name
   public_subnet_names   = [for k, v in local.azs : "${var.name}-public-subnet-${v}-${var.env}"]
   private_subnet_names  = [for k, v in local.azs : "${var.name}-private-subnet-${v}-${var.env}"]
   database_subnet_names = [for k, v in local.azs : "${var.name}-database-subnet-${v}-${var.env}"]
+  elasticache_subnet_names = [for k, v in local.azs : "${var.name}-elasticache-subnet-${v}-${var.env}"]
 
-  database_subnet_group_name = "${var.name}-dsg-${var.env}"
-  database_route_table_tags  = { Name = "${var.name}-rtb-database-${var.env}" }
+  database_subnet_group_name    = "${var.name}-dsg-${var.env}"
+  elasticache_subnet_group_name = "${var.name}-esg-${var.env}"
+  database_route_table_tags     = { Name = "${var.name}-rtb-database-${var.env}" }
+  elasticache_route_table_tags  = { Name = "${var.name}-rtb-elascache-${var.env}"}
+
+
   private_route_table_tags   = { Name = "${var.name}-rtb-private-${var.env}" }
   public_route_table_tags    = { Name = "${var.name}-rtb-public-${var.env}" }
   vpn_gateway_tags           = { Name = "${var.name}-vpn-${var.env}" }

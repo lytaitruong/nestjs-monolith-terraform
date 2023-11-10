@@ -146,9 +146,32 @@ module "security_group_database" {
       rule                     = "postgresql-tcp"
       source_security_group_id = module.security_group_private.security_group_id
     },
+  ]
+  egress_with_source_security_group_id = [
+    {
+      rule                     = "all-all"
+      source_security_group_id = module.security_group_private.security_group_id
+    }
+  ]
+}
+
+module "security_group_elasticache" {
+  depends_on = [module.vpc, module.security_group_private]
+  source     = "../../modules/network/scg"
+
+  env  = local.env
+  name = "${local.name}-scg-el-${local.env}"
+
+  vpc_id = module.vpc.id
+
+  ingress_with_source_security_group_id = [
     {
       rule                     = "redis-tcp"
       source_security_group_id = module.security_group_private.security_group_id
+    },
+    {
+      rule                     = "redis-tcp"
+      source_security_group_id = module.security_group_public.security_group_id
     }
   ]
   egress_with_source_security_group_id = [
@@ -158,6 +181,7 @@ module "security_group_database" {
     }
   ]
 }
+
 
 // ALB
 module "alb" {
@@ -206,6 +230,24 @@ module "rds" {
   database_type = "db.t4g.micro"
 
   database_subnets_group_name = module.vpc.database_subnets_group_name
-  database_subnets = module.vpc.database_subnets
-  database_security_groups   = [module.security_group_database.security_group_id]
+  database_subnets            = module.vpc.database_subnets
+  database_security_groups    = [module.security_group_database.security_group_id]
+}
+
+module "elasticache" {
+  depends_on = [module.vpc, module.security_group_elasticache]
+  source     = "../../modules/database/elasticache"
+
+  env  = local.env
+  name = local.name
+
+  enable         = var.enable_elasticache
+  enable_cluster = var.enable_elasticache_cluster
+
+  node_number_cache       = 1
+  replicas_per_node_group = 0
+
+  node_type          = "cache.t4g.micro"
+  subnet_group_name  = module.vpc.elasticache_subnets_group_name
+  security_group_ids = [module.security_group_elasticache.security_group_id]
 }
