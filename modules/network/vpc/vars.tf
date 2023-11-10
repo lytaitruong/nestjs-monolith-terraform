@@ -1,3 +1,8 @@
+variable "enable" {
+  type = string
+  description = "Enable VPC"
+}
+
 variable "env" {
   type        = string
   description = "Environment"

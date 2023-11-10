@@ -1,3 +1,8 @@
+variable "enable" {
+  type = bool
+  description = "Enable Application Load Balancer"
+}
+
 variable "env" {
   type        = string
   description = "Environment"

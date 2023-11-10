@@ -1,11 +1,16 @@
-variable "region" {
-  type        = string
-  description = "AWS Region"
+variable "enable" {
+  type        = bool
+  description = "Enable S3"
 }
 
 variable "env" {
   type        = string
   description = "Environment"
+}
+
+variable "region" {
+  type        = string
+  description = "AWS Region"
 }
 
 variable "name" {

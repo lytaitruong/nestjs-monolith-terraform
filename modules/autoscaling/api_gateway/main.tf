@@ -1,8 +1,8 @@
 // Only use if you have buy domain name in Route53 or Cloudfare
-data "aws_lb_listener" "listener" {
-  load_balancer_arn = var.alb_arn
-  port = var.acm_cert_domain != null ? 443 : 80
-}
+# data "aws_lb_listener" "listener" {
+#   load_balancer_arn = var.alb_arn
+#   port = var.acm_cert_domain != null ? 443 : 80
+# }
 
 /**
   ** Document Link: https://registry.terraform.io/modules/terraform-aws-modules/apigateway-v2/aws/latest
@@ -12,7 +12,7 @@ module "api_gateway" {
   source  = "terraform-aws-modules/apigateway-v2/aws"
   version = "~> 2.2.0"
   // Conditions create new environment or not if exist
-  create = var.enable_api_gateway
+  create = var.enable
   // If you have domain name -> true
   create_api_domain_name = false
 
@@ -39,7 +39,7 @@ module "api_gateway" {
     "ANY /{proxy+}" = {
       vpc_link           = "${var.name}-vpc-links-${var.env}"
       connection_type    = "VPC_LINK"
-      integration_uri    = data.aws_lb_listener.listener.arn
+      integration_uri    = "" //data.aws_lb_listener.listener.arn
       integration_type   = "HTTP_PROXY"
       integration_method = "ANY"
       timeout_milliseconds = 15000

@@ -1,3 +1,8 @@
+variable "enable" {
+  type = bool
+  description = "Enable Security Group"
+}
+
 variable "env" {
   type        = string
   description = "Environment"

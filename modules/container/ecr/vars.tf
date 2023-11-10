@@ -1,3 +1,8 @@
+variable "enable" {
+  type = bool
+  description = "Enable ECR"
+}
+
 variable "env" {
   type        = string
   description = "Environment"

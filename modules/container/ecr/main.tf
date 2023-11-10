@@ -8,7 +8,7 @@ module "ecr" {
   source  = "terraform-aws-modules/ecr/aws"
   version = "~> 1.6"
   // Conditions create new environment or not if exist
-  create = true
+  create = var.enable
 
   repository_name = "${var.name}-${var.env}"
 

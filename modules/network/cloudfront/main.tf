@@ -7,7 +7,7 @@ module "cloudfront" {
   source  = "terraform-aws-modules/cloudfront/aws"
   version = "~> 3.2.1"
   // Conditions create new environment or not if exist
-  create_distribution = true
+  create_distribution = var.enable
 
   enabled         = true
   is_ipv6_enabled = true

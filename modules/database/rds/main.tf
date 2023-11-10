@@ -14,7 +14,7 @@ module "rds" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 6.0.0"
   // Conditions create new environment or not if exist
-  create_db_instance     = true
+  create_db_instance     = var.enable
   create_db_option_group = true
   create_db_subnet_group = false
   create_monitoring_role = false
@@ -54,8 +54,8 @@ module "rds" {
   backup_window           = "03:00-06:00"
   backup_retention_period = 7
 
-  skip_final_snapshot     = true
-  deletion_protection     = false
+  skip_final_snapshot = true
+  deletion_protection = false
 
   performance_insights_enabled          = true
   performance_insights_retention_period = 7

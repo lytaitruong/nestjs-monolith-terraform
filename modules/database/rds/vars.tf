@@ -1,3 +1,8 @@
+variable "enable" {
+  type = bool
+  description = "Enable RDS"
+}
+
 variable "env" {
   type        = string
   description = "Environment"

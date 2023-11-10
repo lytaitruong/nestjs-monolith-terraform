@@ -1,3 +1,8 @@
+variable "enable" {
+  type = string
+  description = "Enable API Gateway"
+}
+
 variable "env" {
   type        = string
   description = "Environment"
@@ -6,12 +11,6 @@ variable "env" {
 variable "name" {
   type        = string
   description = "Name of Security Group"
-}
-
-variable "enable_api_gateway" {
-  type = bool
-  default = false
-  description = "Enable HTTP Gateway transfer request to ALB"
 }
 
 variable "acm_cert_domain" {

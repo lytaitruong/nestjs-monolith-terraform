@@ -14,7 +14,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.1.2"
   // Conditions create new environment or not if exist
-  create_vpc = true
+  create_vpc = var.enable
 
   azs = local.azs
 

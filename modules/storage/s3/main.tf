@@ -9,7 +9,7 @@ module "s3_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 3.15.1"
   // Conditions create new environment or not if exist
-  create_bucket = true
+  create_bucket = var.enable
   # Allow deletion of non-empty bucket
   force_destroy = true
 
@@ -19,7 +19,6 @@ module "s3_bucket" {
   object_ownership         = "BucketOwnerEnforced"
   object_lock_enabled      = false
   control_object_ownership = false
-
 
   server_side_encryption_configuration = {
     rule = {

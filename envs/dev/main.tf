@@ -28,17 +28,17 @@ provider "aws" {
 }
 
 locals {
-  region             = "ap-southeast-1"
-  env                = "development"
-  name               = "nestjs-monolith"
-  cidr               = "180.0.0.0/16"
-  enable_api_gateway = false
+  region = "ap-southeast-1"
+  env    = "development"
+  name   = "nestjs-monolith"
+  cidr   = "180.0.0.0/16"
 }
 
 // S3
 module "s3" {
   depends_on = []
   source     = "../../modules/storage/s3"
+  enable     = var.enable_s3
 
   for_each = {
     secret-bucket = {
@@ -47,16 +47,17 @@ module "s3" {
       enabled_version = false
     }
   }
-
   env             = local.env
   name            = each.value.name
   type            = each.value.type
   enabled_version = each.value.enabled_version
 }
 
+// CLOUDFRONT
 module "cloudfront" {
   depends_on = [module.s3]
   source     = "../../modules/network/cloudfront"
+  enable     = var.enable_s3 && var.enable_cloudfront
 
   for_each = module.s3
   env      = local.env
@@ -73,6 +74,7 @@ module "cloudfront" {
 module "ecr" {
   depends_on = []
   source     = "../../modules/container/ecr"
+  enable     = var.enable_ecr
 
   env  = local.env
   name = local.name
@@ -82,6 +84,7 @@ module "ecr" {
 module "vpc" {
   depends_on = []
   source     = "../../modules/network/vpc"
+  enable     = var.enable_vpc
 
   env  = local.env
   name = local.name
@@ -92,6 +95,7 @@ module "vpc" {
 module "security_group_public" {
   depends_on = [module.vpc]
   source     = "../../modules/network/scg"
+  enable     = var.enable_vpc && var.enable_security_group
 
   env  = local.env
   name = "${local.name}-scg-pu-${local.env}"
@@ -109,6 +113,7 @@ module "security_group_public" {
 module "security_group_private" {
   depends_on = [module.vpc, module.security_group_public]
   source     = "../../modules/network/scg"
+  enable     = var.enable_vpc && var.enable_security_group
 
   env  = local.env
   name = "${local.name}-scg-pr-${local.env}"
@@ -135,6 +140,7 @@ module "security_group_private" {
 module "security_group_database" {
   depends_on = [module.vpc, module.security_group_private]
   source     = "../../modules/network/scg"
+  enable     = var.enable_vpc && var.enable_security_group
 
   env  = local.env
   name = "${local.name}-scg-db-${local.env}"
@@ -158,6 +164,7 @@ module "security_group_database" {
 module "security_group_elasticache" {
   depends_on = [module.vpc, module.security_group_private]
   source     = "../../modules/network/scg"
+  enable     = var.enable_vpc && var.enable_security_group
 
   env  = local.env
   name = "${local.name}-scg-el-${local.env}"
@@ -182,15 +189,15 @@ module "security_group_elasticache" {
   ]
 }
 
-
 // ALB
 module "alb" {
   depends_on = [module.vpc, module.security_group_public]
   source     = "../../modules/autoscaling/alb"
+  enable     = var.enable_vpc && var.enable_security_group && var.enable_load_balancer
 
   env                = local.env
   name               = local.name
-  enable_api_gateway = local.enable_api_gateway
+  enable_api_gateway = var.enable_api_gateway
 
   app_port        = var.app_port
   app_type        = var.app_type
@@ -206,10 +213,10 @@ module "alb" {
 module "api_gateway" {
   depends_on = [module.vpc, module.alb, module.security_group_public]
   source     = "../../modules/autoscaling/api_gateway"
+  enable     = var.enable_vpc && var.enable_load_balancer && var.enable_security_group && var.enable_api_gateway
 
-  env                = local.env
-  name               = local.name
-  enable_api_gateway = local.enable_api_gateway
+  env  = local.env
+  name = local.name
 
   acm_cert_domain = var.acm_cert_domain
 
@@ -222,6 +229,7 @@ module "api_gateway" {
 module "rds" {
   depends_on = [module.vpc, module.security_group_database]
   source     = "../../modules/database/rds"
+  enable     = var.enable_vpc && var.enable_security_group && var.enable_rds
 
   env  = local.env
   name = local.name
@@ -237,11 +245,11 @@ module "rds" {
 module "elasticache" {
   depends_on = [module.vpc, module.security_group_elasticache]
   source     = "../../modules/database/elasticache"
+  enable     = var.enable_vpc && var.enable_elasticache
 
   env  = local.env
   name = local.name
 
-  enable         = var.enable_elasticache
   enable_cluster = var.enable_elasticache_cluster
 
   node_number_cache       = 1
