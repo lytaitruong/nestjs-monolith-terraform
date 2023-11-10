@@ -45,7 +45,7 @@
   - [x] Setup S3
   - [x] Setup Cloudfront
 - Database
-  - [ ] RDS PostgreSQL
+  - [x] RDS PostgreSQL
   - [ ] RDS RedisCache
 - AutoScaling
   - [x] Setup API Gateway

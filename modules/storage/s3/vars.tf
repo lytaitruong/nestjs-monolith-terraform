@@ -5,7 +5,7 @@ variable "env" {
 
 variable "name" {
   type        = string
-  description = "Name of VPC"
+  description = "Name of S3"
 }
 
 variable "type" {

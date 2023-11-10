@@ -27,3 +27,7 @@ output "private_subnets" {
 output "database_subnets" {
   value = module.vpc.database_subnets
 }
+
+output "database_subnets_group_name" {
+  value = module.vpc.database_subnet_group_name
+}

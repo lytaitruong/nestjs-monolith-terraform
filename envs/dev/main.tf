@@ -193,3 +193,19 @@ module "api_gateway" {
   subnet_ids         = module.vpc.public_subnets
   security_group_ids = [module.security_group_public.security_group_id]
 }
+
+# RDS
+module "rds" {
+  depends_on = [module.vpc, module.security_group_database]
+  source     = "../../modules/database/rds"
+
+  env  = local.env
+  name = local.name
+
+  database_name = "postgres"
+  database_type = "db.t4g.micro"
+
+  database_subnets_group_name = module.vpc.database_subnets_group_name
+  database_subnets = module.vpc.database_subnets
+  database_security_groups   = [module.security_group_database.security_group_id]
+}
